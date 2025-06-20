@@ -1,0 +1,6 @@
+data/teacher/
+data/test/
+*.pkl
+*.index
+.env
+__pycache__/

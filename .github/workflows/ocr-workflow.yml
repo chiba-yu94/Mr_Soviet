@@ -1,0 +1,37 @@
+name: OCR + FAISS Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  predict:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - name: Install Tesseract
+        run: |
+          sudo apt update
+          sudo apt install -y tesseract-ocr tesseract-ocr-jpn
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run prediction pipeline
+        run: |
+          python scripts/make_index.py
+          python scripts/ocr_predict_to_csv.py
+          python scripts/evaluate_predictions.py
+
+      - name: Upload CSV result
+        uses: actions/upload-artifact@v3
+        with:
+          name: predicted-output
+          path: scripts/output.csv
